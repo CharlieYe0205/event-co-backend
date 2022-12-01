@@ -54,7 +54,21 @@ describe('when creating booking', function () {
       .toThrow('Fully booked!');
   });
 
-  it('allows booking when there is no overbooking if event date is less than 10 days', async () => {
+  it('throws error when there is overbooking if event date is 10 days away', async () => {
+    const capacity = 100;
+    const day10FromNow = dateFromDaysDiff(10);
+    const event = { id: 'eventId', capacity, date: day10FromNow };
+    const bookingData = { contact: 'foo', eventId: 'eventId' };
+
+    Event.find.mockResolvedValue(event);
+    Booking.CountByEventId.mockResolvedValue(capacity);
+
+    await expect(BookingService.create(bookingData))
+      .rejects
+      .toThrow('Fully booked!');
+  });
+
+  it('allows booking when there is no overbooking if event date is less than 10 days away', async () => {
     const capacity = 100;
     const day5FromNow = dateFromDaysDiff(5);
     const event = { id: 'eventId', capacity, date: day5FromNow };
@@ -69,7 +83,7 @@ describe('when creating booking', function () {
     expect(createdBooking).toEqual(booking);
   });
 
-  it('throws error when there is 10% overbooking if event date is more than 10 days', async () => {
+  it('throws error when there is 10% overbooking if event date is more than 10 days away', async () => {
     const capacity = 100;
     const day50FromNow = dateFromDaysDiff(50);
     const event = { id: 'eventId', capacity, date: day50FromNow };
@@ -83,7 +97,7 @@ describe('when creating booking', function () {
       .toThrow('Fully booked!');
   });
 
-  it('allows booking when there is no 10% overbooking if event date is more than 10 days', async () => {
+  it('allows booking when there is no 10% overbooking if event date is more than 10 days away', async () => {
     const capacity = 100;
     const day50FromNow = dateFromDaysDiff(50);
     const event = { id: 'eventId', capacity, date: day50FromNow };

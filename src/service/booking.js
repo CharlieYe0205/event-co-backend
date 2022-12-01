@@ -26,7 +26,7 @@ class BookingService {
     const daysAway = calDaysDiff(event.date, new Date());
     const currentBookingCount = await Booking.CountByEventId(eventId);
 
-    if (daysAway <= 0) {
+    if (daysAway < 0) {
       throw new Error('Not Valid Booking!');
     }
     if (daysAway <= 10 && currentBookingCount >= event.capacity) {
